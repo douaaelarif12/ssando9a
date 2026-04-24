@@ -1,0 +1,45 @@
+name: sandokti
+description: Sandokti - Budget marocain premium
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.4 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  flutter_local_notifications: ^19.4.2
+  timezone: ^0.10.1
+  flutter_timezone: ^4.1.1
+
+  flutter_riverpod: ^2.5.1
+  intl: ^0.19.0
+  fl_chart: ^0.69.0
+  cupertino_icons: ^1.0.6
+
+  http: ^1.2.2
+
+  # Firebase
+  firebase_core: ^4.7.0
+  firebase_auth: ^6.4.0
+  cloud_firestore: ^6.3.0
+
+  # Vertex AI in Firebase (remplace google_generative_ai — pas de clé API exposée)
+  firebase_ai: 3.11.0
+
+  # PDF export
+  pdf: ^3.11.0
+  printing: ^5.13.4
+  path_provider: ^2.1.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/patterns/zellige.png

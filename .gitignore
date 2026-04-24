@@ -1,0 +1,33 @@
+# Flutter
+.dart_tool/
+.build/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+pubspec.lock
+
+# Android
+/android/.gradle/
+/android/app/build/
+/android/local.properties
+
+# iOS
+/ios/Pods/
+/ios/.symlinks/
+
+# IDE
+.idea/
+.vscode/
+.metadata
+
+# Logs
+*.log
+
+# Backup
+android_backup/
+
+# Keys
+*.keystore
+*.jks
+.env

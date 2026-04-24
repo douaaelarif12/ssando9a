@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "725919981685",
+    "project_id": "sandokti",
+    "storage_bucket": "sandokti.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:725919981685:android:d94c964206d40ed294583c",
+        "android_client_info": {
+          "package_name": "com.example.sandokti"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4a2pqVngcssvMXMDKGhoF41GToFbgS5A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
