@@ -179,7 +179,7 @@ class BudgetFirestoreDatasource {
         'createdAt': _timestampToMillis(data['createdAt']),
       });
     } catch (e) {
-      _throwFriendly(e);
+      return _throwFriendly(e);
     }
   }
 
@@ -226,7 +226,7 @@ class BudgetFirestoreDatasource {
         createdAt: now.millisecondsSinceEpoch,
       );
     } catch (e) {
-      _throwFriendly(e);
+      return _throwFriendly(e);
     }
   }
 
@@ -259,7 +259,7 @@ class BudgetFirestoreDatasource {
       if (!doc.exists) return null;
       return doc.data()?['value']?.toString();
     } catch (e) {
-      _throwFriendly(e);
+      return _throwFriendly(e);
     }
   }
 
@@ -302,7 +302,7 @@ class BudgetFirestoreDatasource {
         createdAt: _timestampToMillis(data['createdAt']),
       );
     } catch (e) {
-      _throwFriendly(e);
+      return _throwFriendly(e);
     }
   }
 
@@ -310,8 +310,6 @@ class BudgetFirestoreDatasource {
     required String email,
     required String password,
   }) async {
-    await _ensureReady();
-
     try {
       await _auth.signInWithEmailAndPassword(
         email: email.trim().toLowerCase(),
@@ -325,7 +323,7 @@ class BudgetFirestoreDatasource {
 
       return user;
     } catch (e) {
-      _throwFriendly(e);
+      return _throwFriendly(e);
     }
   }
 
@@ -422,7 +420,7 @@ class BudgetFirestoreDatasource {
         createdAt: now.millisecondsSinceEpoch,
       );
     } catch (e) {
-      _throwFriendly(e);
+      return _throwFriendly(e);
     }
   }
 
@@ -630,7 +628,7 @@ class BudgetFirestoreDatasource {
 
       return allRows.take(limit).map(TransactionModel.fromMap).toList();
     } catch (e) {
-      _throwFriendly(e);
+      return _throwFriendly(e);
     }
   }
 
@@ -729,7 +727,7 @@ class BudgetFirestoreDatasource {
 
       return allRows.map(TransactionModel.fromMap).toList();
     } catch (e) {
-      _throwFriendly(e);
+      return _throwFriendly(e);
     }
   }
 
@@ -785,7 +783,7 @@ class BudgetFirestoreDatasource {
 
       return rows;
     } catch (e) {
-      _throwFriendly(e);
+      return _throwFriendly(e);
     }
   }
 
@@ -846,7 +844,7 @@ class BudgetFirestoreDatasource {
 
       return fixed + extra;
     } catch (e) {
-      _throwFriendly(e);
+      return _throwFriendly(e);
     }
   }
 
@@ -877,7 +875,7 @@ class BudgetFirestoreDatasource {
         };
       }).toList();
     } catch (e) {
-      _throwFriendly(e);
+      return _throwFriendly(e);
     }
   }
 
@@ -1016,7 +1014,7 @@ class BudgetFirestoreDatasource {
         };
       }).toList();
     } catch (e) {
-      _throwFriendly(e);
+      return _throwFriendly(e);
     }
   }
 
@@ -1085,7 +1083,7 @@ class BudgetFirestoreDatasource {
         (sum, doc) => sum + ((doc.data()['amountCents'] as int?) ?? 0),
       );
     } catch (e) {
-      _throwFriendly(e);
+      return _throwFriendly(e);
     }
   }
 
@@ -1101,7 +1099,7 @@ class BudgetFirestoreDatasource {
         (sum, doc) => sum + ((doc.data()['amountCents'] as int?) ?? 0),
       );
     } catch (e) {
-      _throwFriendly(e);
+      return _throwFriendly(e);
     }
   }
 
@@ -1125,7 +1123,7 @@ class BudgetFirestoreDatasource {
         };
       }).toList();
     } catch (e) {
-      _throwFriendly(e);
+      return _throwFriendly(e);
     }
   }
 

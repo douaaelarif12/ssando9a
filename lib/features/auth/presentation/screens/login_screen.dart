@@ -369,4 +369,3 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     super.dispose();
   }
 }
-

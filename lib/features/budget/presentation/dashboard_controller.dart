@@ -3,7 +3,6 @@ import '../domain/services/spending_habit_analyzer.dart';
 import '../domain/ai/budget_advice_engine.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../auth/presentation/auth_controller.dart';
 import '../data/datasources/firestore/budget_firestore_datasource.dart';
 import '../data/models/transaction_model.dart';
 import '../domain/ai/anomaly_detector.dart';
@@ -79,8 +78,6 @@ class DashboardController extends AsyncNotifier<DashboardState> {
  BudgetFirestoreDatasource get ds => ref.read(budgetDsProvider);
   @override
   Future<DashboardState> build() async {
-    ref.watch(authProvider);
-
     final now = DateTime.now();
     final currentUser = await ds.getCurrentUser();
 
