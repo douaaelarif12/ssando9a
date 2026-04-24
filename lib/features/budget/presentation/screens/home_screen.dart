@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sandokti/app/theme/sandokti_colors.dart';
 import 'package:sandokti/core/utils/currency.dart';
+import 'package:sandokti/core/utils/category_ui.dart';
 import 'package:sandokti/features/budget/domain/ai/expense_categorizer.dart';
 import 'package:sandokti/features/budget/presentation/dashboard_controller.dart';
 import 'habits_analysis_screen.dart';
@@ -876,21 +877,29 @@ class _QuickAddExpenseSheetState extends State<_QuickAddExpenseSheet> {
             const SizedBox(height: 10),
             DropdownButtonFormField<String>(
               value: _categoryId,
-              items: const [
-                DropdownMenuItem(value: 'cat_food', child: Text('Nourriture')),
-                DropdownMenuItem(
-                  value: 'cat_transport',
-                  child: Text('Transport'),
-                ),
-                DropdownMenuItem(value: 'cat_bills', child: Text('Factures')),
-                DropdownMenuItem(value: 'cat_health', child: Text('Santé')),
-                DropdownMenuItem(value: 'cat_sport', child: Text('Sport')),
-                DropdownMenuItem(value: 'cat_fun', child: Text('Sorties')),
-                DropdownMenuItem(value: 'cat_children', child: Text('Enfants')),
-                DropdownMenuItem(
-                  value: 'cat_unexpected',
-                  child: Text('Imprévus'),
-                ),
+              items: [
+                _catItem('cat_food',        'Nourriture'),
+                _catItem('cat_market',      'Marché / Épicerie'),
+                _catItem('cat_restaurant',  'Restaurant / Café'),
+                _catItem('cat_transport',   'Transport'),
+                _catItem('cat_bus',         'Bus / Tram'),
+                _catItem('cat_fuel',        'Essence'),
+                _catItem('cat_auto_maintenance', 'Entretien voiture'),
+                _catItem('cat_auto_insurance',   'Assurance voiture'),
+                _catItem('cat_bills',       'Factures'),
+                _catItem('cat_internet',    'Internet / WiFi'),
+                _catItem('cat_phone',       'Téléphone'),
+                _catItem('cat_health',      'Santé'),
+                _catItem('cat_sport',       'Sport / Gym'),
+                _catItem('cat_beauty',      'Beauté / Hammam'),
+                _catItem('cat_fun',         'Loisirs / Sorties'),
+                _catItem('cat_school',      'École / Études'),
+                _catItem('cat_children',    'Enfants'),
+                _catItem('cat_family',      'Famille'),
+                _catItem('cat_eid',         'Aïd / Mouton'),
+                _catItem('cat_ramadan',     'Ramadan'),
+                _catItem('cat_travel',      'Voyages'),
+                _catItem('cat_unexpected',  'Imprévus'),
               ],
               onChanged: (v) {
                 setState(() {
@@ -932,6 +941,20 @@ class _QuickAddExpenseSheetState extends State<_QuickAddExpenseSheet> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  DropdownMenuItem<String> _catItem(String id, String label) {
+    final icon = CategoryUI.iconForCategory(id);
+    return DropdownMenuItem(
+      value: id,
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: SandoktiColors.emerald),
+          const SizedBox(width: 10),
+          Text(label),
+        ],
       ),
     );
   }

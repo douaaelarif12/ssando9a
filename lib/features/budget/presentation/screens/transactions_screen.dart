@@ -226,7 +226,7 @@ class TransactionsScreen extends ConsumerWidget {
         label = 'Prime';
       } else {
         accent = SandoktiColors.emerald;
-        icon = CategoryUI.iconForKey(t.categoryIconKey);
+        icon = CategoryUI.iconForCategory(t.categoryId);
         label = t.categoryName ?? 'Dépense';
       }
 
