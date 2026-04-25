@@ -1,3 +1,4 @@
+/// Modèle de prévision de dépenses de fin de mois.
 class SpendingForecast {
   final int predictedExpenseCents;
   final int predictedOverrunCents;
@@ -10,9 +11,9 @@ class SpendingForecast {
   });
 }
 
+/// Moteur de prévision linéaire — messages en contexte marocain (DH).
 class SpendingForecastEngine {
   /// Nombre minimum de jours avant d'activer la prévision
-  /// (évite les faux positifs en début de mois)
   static const int _minDaysBeforeForecast = 7;
 
   static SpendingForecast forecast({
@@ -21,7 +22,6 @@ class SpendingForecastEngine {
     required int currentDay,
     required int totalDaysInMonth,
   }) {
-    // Pas encore assez de données pour une prévision fiable
     if (currentDay < _minDaysBeforeForecast ||
         totalDaysInMonth <= 0 ||
         currentExpenseCents <= 0) {
@@ -35,9 +35,8 @@ class SpendingForecastEngine {
     final predicted =
         ((currentExpenseCents / currentDay) * totalDaysInMonth).round();
 
-    final overrun = predicted > availableBudgetCents
-        ? predicted - availableBudgetCents
-        : 0;
+    final overrun =
+        predicted > availableBudgetCents ? predicted - availableBudgetCents : 0;
 
     return SpendingForecast(
       predictedExpenseCents: predicted,
@@ -51,9 +50,13 @@ class SpendingForecastEngine {
     final overrunDh = (forecast.predictedOverrunCents / 100).round();
 
     if (forecast.willOverrun) {
-      return 'Au rythme actuel, tu dépasseras ton budget de $overrunDh DH.';
+      return 'Au rythme actuel, tu risques de dépasser ton budget de $overrunDh DH avant la fin du mois. Surveille tes dépenses.';
     }
 
-    return 'Au rythme actuel, tes dépenses de fin de mois sont estimées à $predictedDh DH.';
+    if (predictedDh == 0) {
+      return 'Pas encore assez de données pour une prévision fiable (saisie au moins 7 jours).';
+    }
+
+    return 'Prévision fin de mois : environ $predictedDh DH de dépenses. Tu es dans les limites de ton budget, continue !';
   }
 }

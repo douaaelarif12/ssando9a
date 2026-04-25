@@ -147,6 +147,7 @@ class MoreScreen extends ConsumerWidget {
                     onChanged: (value) async {
                       final ds = ref.read(budgetDsProvider);
                       await ds.setExpenseReminderEnabled(value);
+
                       ref.invalidate(reminderSettingsProvider);
 
                       if (!context.mounted) return;
@@ -154,7 +155,7 @@ class MoreScreen extends ConsumerWidget {
                         SnackBar(
                           content: Text(
                             value
-                                ? 'Rappel activé'
+                                ? 'Rappel activé ✓'
                                 : 'Rappel désactivé',
                           ),
                         ),
@@ -184,12 +185,13 @@ class MoreScreen extends ConsumerWidget {
 
                     final ds = ref.read(budgetDsProvider);
                     await ds.setExpenseReminderTime(value);
+
                     ref.invalidate(reminderSettingsProvider);
 
                     if (!context.mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Heure du rappel : $value'),
+                        content: Text('Rappel programmé à $value ✓'),
                       ),
                     );
                   },
