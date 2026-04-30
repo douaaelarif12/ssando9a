@@ -16,6 +16,7 @@ class DashboardState {
   final int expenseCents;
   final int previousExpenseCents;
   final int fixedExpensesCents;
+  final int actualSavingCents;
   final List<TransactionModel> recent;
   final List<Map<String, Object?>> byCategory;
   final List<BudgetRecommendation> recommendations;
@@ -24,14 +25,13 @@ class DashboardState {
   final String smartAdvice;
   final SpendingHabitAnalysis spendingHabitAnalysis;
 
-  // Prévision IA
   final int forecastExpenseCents;
   final bool forecastWillOverrun;
 
   int get reservedSavingCents => plannedMonthlySavingCents;
 
   int get realAvailableBudgetCents =>
-      incomeCents - plannedMonthlySavingCents - fixedExpensesCents;
+      incomeCents - plannedMonthlySavingCents - actualSavingCents - fixedExpensesCents;
 
   int get availableBudgetCents => realAvailableBudgetCents;
 
@@ -43,7 +43,7 @@ class DashboardState {
 
   double get savingRate {
     if (incomeCents == 0) return 0;
-    return (realBalanceCents / incomeCents) * 100;
+    return (actualSavingCents / incomeCents) * 100;
   }
 
   double get expenseVariationPercent {
@@ -57,6 +57,7 @@ class DashboardState {
     required this.expenseCents,
     required this.previousExpenseCents,
     required this.fixedExpensesCents,
+    required this.actualSavingCents,
     required this.recent,
     required this.byCategory,
     required this.recommendations,
@@ -70,12 +71,13 @@ class DashboardState {
 }
 
 final dashboardProvider =
-    AsyncNotifierProvider<DashboardController, DashboardState>(
+AsyncNotifierProvider<DashboardController, DashboardState>(
   DashboardController.new,
 );
 
 class DashboardController extends AsyncNotifier<DashboardState> {
- BudgetFirestoreDatasource get ds => ref.read(budgetDsProvider);
+  BudgetFirestoreDatasource get ds => ref.read(budgetDsProvider);
+
   @override
   Future<DashboardState> build() async {
     final now = DateTime.now();
@@ -88,6 +90,7 @@ class DashboardController extends AsyncNotifier<DashboardState> {
         expenseCents: 0,
         previousExpenseCents: 0,
         fixedExpensesCents: 0,
+        actualSavingCents: 0,
         recent: [],
         byCategory: [],
         recommendations: [],
@@ -102,6 +105,7 @@ class DashboardController extends AsyncNotifier<DashboardState> {
 
     final income = await ds.getMonthlyIncomeTotalCents(now.year, now.month);
     final expense = await ds.getMonthlyExpenseCents(now.year, now.month);
+    final actualSaving = await ds.getMonthlySavingsCents(now.year, now.month);
 
     final fixedExpenses = await ds.getTotalFixedExpensesCentsForMonth(
       now.year,
@@ -119,10 +123,10 @@ class DashboardController extends AsyncNotifier<DashboardState> {
     final recent = await ds.getRecentTransactions();
 
     final currentMonthTransactions =
-        await ds.getTransactionsForMonth(now.year, now.month);
+    await ds.getTransactionsForMonth(now.year, now.month);
 
     final previousMonthTransactions =
-        await ds.getTransactionsForMonth(prevYear, prevMonth);
+    await ds.getTransactionsForMonth(prevYear, prevMonth);
 
     final byCategory = await ds.getMonthlyExpenseByCategoryRaw(
       now.year,
@@ -139,7 +143,9 @@ class DashboardController extends AsyncNotifier<DashboardState> {
       );
     }
 
-    int variableBudgetBase = income - monthlySavingTotal - fixedExpenses;
+    int variableBudgetBase =
+        income - monthlySavingTotal - actualSaving - fixedExpenses;
+
     if (variableBudgetBase < 0) {
       variableBudgetBase = 0;
     }
@@ -155,7 +161,6 @@ class DashboardController extends AsyncNotifier<DashboardState> {
       byCategory: byCategory,
     );
 
-    // IA locale 1 : anomalie simple
     final globalAnomaly = AnomalyDetector.isAnomalous(
       currentCents: expense,
       averageCents: previousExpense,
@@ -174,12 +179,11 @@ class DashboardController extends AsyncNotifier<DashboardState> {
       );
     }
 
-    // IA locale 2 : prévision fin de mois
     final currentDay = now.day;
     final totalDaysInMonth = DateTime(now.year, now.month + 1, 0).day;
 
     final availableBudgetForForecast =
-        income - fixedExpenses - monthlySavingTotal;
+        income - fixedExpenses - monthlySavingTotal - actualSaving;
 
     final forecast = SpendingForecastEngine.forecast(
       currentExpenseCents: expense,
@@ -227,6 +231,7 @@ class DashboardController extends AsyncNotifier<DashboardState> {
       expenseCents: expense,
       previousExpenseCents: previousExpense,
       fixedExpensesCents: fixedExpenses,
+      actualSavingCents: actualSaving,
       recent: recent,
       byCategory: byCategory,
       recommendations: recommendations,

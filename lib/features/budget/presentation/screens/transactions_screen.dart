@@ -36,11 +36,22 @@ FutureProvider.autoDispose<_TransactionsMonthOverview>((ref) async {
     }
   }
 
+  final planned = await ds.getPlannedExpenses();
+
+  int monthlyGoalCents = 0;
+  for (final p in planned) {
+    monthlyGoalCents += ds.calculateMonthlySaving(
+      totalCents: p['totalAmountCents'] as int,
+      targetDateMillis: p['targetDate'] as int,
+    );
+  }
+
   final remainingBudgetCents = salaryCents +
       primesCents -
+      monthlyGoalCents -
       fixedExpensesCents -
-      expenseCents -
-      savingsCents;
+      savingsCents -
+      expenseCents;
 
   return _TransactionsMonthOverview(
     items: items,

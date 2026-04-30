@@ -204,14 +204,32 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Bienvenue sur Sandokti',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                       Center(
+  child: Container(
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: Colors.white.withOpacity(0.08),
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(
+        color: const Color(0xFFD4AF37).withOpacity(0.5),
+        width: 1,
+      ),
+    ),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: SizedBox(
+        width: 110,
+        height: 110,
+        child: FittedBox(
+          fit: BoxFit.cover,
+          child: Image.asset(
+            'assets/logo/sandokti_logo.png',
+          ),
+        ),
+      ),
+    ),
+  ),
+),
                       const SizedBox(height: 6),
                       const Text(
                         'Connecte-toi pour continuer',
