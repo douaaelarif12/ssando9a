@@ -26,7 +26,7 @@ dependencies:
   firebase_auth: ^6.4.0
   cloud_firestore: ^6.3.0
 
-  # Vertex AI in Firebase (remplace google_generative_ai — pas de clé API exposée)
+  # Vertex AI in Firebase
   firebase_ai: ^3.11.0
 
   # PDF export
@@ -38,6 +38,17 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo/sandokti_logo.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#0B2A2A"
+  adaptive_icon_foreground: "assets/logo/sandokti_logo.png"
+  web:
+    generate: false
 
 flutter:
   uses-material-design: true
