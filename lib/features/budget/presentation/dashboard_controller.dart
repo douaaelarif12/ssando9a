@@ -3,6 +3,7 @@ import '../domain/services/spending_habit_analyzer.dart';
 import '../domain/ai/budget_advice_engine.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/services/notification_service.dart';
 import '../data/datasources/firestore/budget_firestore_datasource.dart';
 import '../data/models/transaction_model.dart';
 import '../domain/ai/anomaly_detector.dart';
@@ -160,6 +161,21 @@ class DashboardController extends AsyncNotifier<DashboardState> {
       recommendations: recommendations,
       byCategory: byCategory,
     );
+
+    // ── Notifications d'alerte budget ─────────────────────────────────────
+    // Envoie une notification pour chaque catégorie en warning/danger
+    for (final alert in alerts) {
+      if (alert.id == 'forecast_overrun' || alert.id == 'global_anomaly') {
+        continue; // Gérés séparément
+      }
+      // Fire-and-forget : ne bloque pas le chargement du dashboard
+      NotificationService.instance.sendBudgetAlert(
+        categoryId: alert.id,
+        categoryLabel: alert.label,
+        ratio: alert.ratio,
+        severity: alert.severity,
+      );
+    }
 
     final globalAnomaly = AnomalyDetector.isAnomalous(
       currentCents: expense,

@@ -7,6 +7,7 @@ import 'package:intl/date_symbol_data_local.dart';
 
 import 'app/navigation/auth_gate.dart';
 import 'app/theme/theme_provider.dart';
+import 'core/services/notification_service.dart';
 import 'features/budget/data/datasources/firestore/sandokti_firestore.dart';
 import 'firebase_options.dart';
 
@@ -18,6 +19,9 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Init notifications en arrière-plan (n'attend pas)
+  unawaited(NotificationService.instance.initialize());
 
   // Init Firestore en arrière-plan — l'UI s'affiche immédiatement
   unawaited(SandoktiFirestore.instance.ensureInitialized());
