@@ -1,6 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../budget/presentation/dashboard_controller.dart';
 import '../../budget/presentation/providers/budget_providers.dart';
 import '../data/models/user_model.dart';
 
@@ -10,6 +10,28 @@ final authProvider =
 class AuthController extends AsyncNotifier<UserModel?> {
   @override
   Future<UserModel?> build() async {
+    // Écoute Firebase Auth en temps réel
+    final sub = FirebaseAuth.instance.authStateChanges().listen(
+      (firebaseUser) async {
+        if (firebaseUser == null) {
+          state = const AsyncData(null);
+        } else {
+          try {
+            final ds = ref.read(budgetDsProvider);
+            final user = await ds.getCurrentUser();
+            state = AsyncData(user);
+          } catch (e, st) {
+            state = AsyncError(e, st);
+          }
+        }
+      },
+    );
+    ref.onDispose(sub.cancel);
+
+    // Valeur initiale synchrone depuis Firebase local cache
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+    if (firebaseUser == null) return null;
+
     final ds = ref.read(budgetDsProvider);
     return ds.getCurrentUser();
   }
@@ -19,17 +41,14 @@ class AuthController extends AsyncNotifier<UserModel?> {
     required String password,
   }) async {
     state = const AsyncLoading();
-
     try {
       final ds = ref.read(budgetDsProvider);
-
       final user = await ds.login(
         email: email.trim().toLowerCase(),
         password: password.trim(),
       );
-
       state = AsyncData(user);
-      ref.invalidate(dashboardProvider);
+      // PAS de ref.invalidate ici — le stream authStateChanges gère tout
       return null;
     } catch (e, st) {
       state = AsyncError(e, st);
@@ -46,10 +65,8 @@ class AuthController extends AsyncNotifier<UserModel?> {
     required int childrenCount,
   }) async {
     state = const AsyncLoading();
-
     try {
       final ds = ref.read(budgetDsProvider);
-
       final user = await ds.registerUser(
         fullName: fullName.trim(),
         email: email.trim().toLowerCase(),
@@ -58,9 +75,7 @@ class AuthController extends AsyncNotifier<UserModel?> {
         householdType: householdType,
         childrenCount: childrenCount,
       );
-
       state = AsyncData(user);
-       ref.invalidate(dashboardProvider);
       return null;
     } catch (e, st) {
       state = AsyncError(e, st);
@@ -71,11 +86,8 @@ class AuthController extends AsyncNotifier<UserModel?> {
   Future<String?> logout() async {
     try {
       final ds = ref.read(budgetDsProvider);
-
       await ds.logout();
-
       state = const AsyncData(null);
-      ref.invalidate(dashboardProvider);
       return null;
     } catch (e, st) {
       state = AsyncError(e, st);
@@ -83,20 +95,12 @@ class AuthController extends AsyncNotifier<UserModel?> {
     }
   }
 
-  Future<String?> updateMonthlySalary({
-    required int monthlySalaryDh,
-  }) async {
+  Future<String?> updateMonthlySalary({required int monthlySalaryDh}) async {
     try {
       final ds = ref.read(budgetDsProvider);
-
-      await ds.updateMonthlySalary(
-        monthlySalaryDh: monthlySalaryDh,
-      );
-
+      await ds.updateMonthlySalary(monthlySalaryDh: monthlySalaryDh);
       final refreshedUser = await ds.getCurrentUser();
       state = AsyncData(refreshedUser);
-
-      ref.invalidate(dashboardProvider);
       return null;
     } catch (e, st) {
       state = AsyncError(e, st);
@@ -110,15 +114,9 @@ class AuthController extends AsyncNotifier<UserModel?> {
   }) async {
     try {
       final ds = ref.read(budgetDsProvider);
-
-      await ds.updateProfile(
-        fullName: fullName,
-        email: email,
-      );
-
+      await ds.updateProfile(fullName: fullName, email: email);
       final refreshedUser = await ds.getCurrentUser();
       state = AsyncData(refreshedUser);
-
       return null;
     } catch (e, st) {
       state = AsyncError(e, st);
@@ -132,12 +130,10 @@ class AuthController extends AsyncNotifier<UserModel?> {
   }) async {
     try {
       final ds = ref.read(budgetDsProvider);
-
       await ds.changePassword(
         currentPassword: currentPassword,
         newPassword: newPassword,
       );
-
       return null;
     } catch (e, st) {
       state = AsyncError(e, st);

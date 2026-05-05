@@ -112,9 +112,11 @@ class BudgetRules {
         return null;
 
       case 'cat_bills':
+        return 'bills';
+
       case 'cat_phone':
       case 'cat_internet':
-        return 'bills';
+        return 'telecom';
 
       case 'cat_food':
       case 'cat_market':
@@ -160,7 +162,8 @@ class BudgetRules {
   }) {
     if (householdType == 'couple' && childrenCount > 0) {
       return {
-        'bills': (20, 'Electricité / Eau / Gaz'),
+        'bills': (15, 'Electricité / Eau / Gaz'),
+        'telecom': (5, 'Téléphone / Internet'),
         'food': (28, 'Nourriture'),
         'transport': (16, 'Transport / Voiture'),
         'children': (16, 'Enfants'),
@@ -172,7 +175,8 @@ class BudgetRules {
 
     if (householdType == 'couple') {
       return {
-        'bills': (12, 'Electricité / Eau / Gaz'),
+        'bills': (8, 'Electricité / Eau / Gaz'),
+        'telecom': (4, 'Téléphone / Internet'),
         'food': (15, 'Nourriture'),
         'transport': (10, 'Transport / Voiture'),
         'coffee': (9, 'Café / Sorties'),
@@ -182,11 +186,13 @@ class BudgetRules {
     }
 
     return {
-      'bills': (6, 'Electricité / Eau / Gaz'),
-      'food': (10, 'Nourriture'),
-      'transport': (8, 'Transport / Voiture'),
-      'coffee': (4, 'Café / Sorties'),
-      'sport': (8, 'Sport / Bien-être'),
+      'bills': (8, 'Electricité / Eau / Gaz'),
+      'telecom': (6, 'Téléphone / Internet'),
+      'food': (15, 'Nourriture'),
+      'transport': (10, 'Transport / Voiture'),
+      'coffee': (6, 'Café / Sorties'),
+      'sport': (5, 'Sport / Bien-être'),
+      'health': (5, 'Santé'),
       'unexpected': (10, 'Imprévus'),
       'saving': (20, 'Epargne obligatoire'),
     };

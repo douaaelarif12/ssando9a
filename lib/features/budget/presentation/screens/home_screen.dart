@@ -81,8 +81,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const SizedBox(height: 16),
               _recommendedBudget(context, s),
               const SizedBox(height: 16),
-              _budgetAlerts(context, s),
-              const SizedBox(height: 16),
               _categoryChart(context, s),
             ],
           ),

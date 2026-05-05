@@ -158,12 +158,17 @@ class SpendingHabitAnalyzer {
       final currentAmount = entry.value;
       final previousAmount = previousMap[category] ?? 0;
 
-      if (previousAmount <= 0) continue;
+      // On ignore si le mois précédent était trop faible (< 50 DH)
+      // pour éviter des % absurdes genre +6900%
+      if (previousAmount < 5000) continue;
 
       final percent = ((currentAmount - previousAmount) / previousAmount) * 100;
 
-      if (percent > bestPercent) {
-        bestPercent = percent;
+      // On plafonne à 500% pour éviter des chiffres choquants non utiles
+      final double capped = percent.clamp(0.0, 500.0);
+
+      if (capped > bestPercent) {
+        bestPercent = capped;
         bestCategory = category;
       }
     }

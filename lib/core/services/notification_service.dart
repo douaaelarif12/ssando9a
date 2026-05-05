@@ -3,7 +3,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-
+import '../../../../core/firebase/user_settings_service.dart';
 /// Service centralisé pour toutes les notifications locales de Sandokti.
 ///
 /// Types de notifications gérés :
@@ -18,6 +18,15 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   bool _initialized = false;
+
+  // ─── Cache anti-doublon ──────────────────────────────────────────────────
+  // Clé : "categoryId:severity:YYYY-MM"
+  // Ne renvoie PAS la même alerte plusieurs fois dans le même mois
+  // pour la même catégorie + sévérité. Se vide au redémarrage de l'app.
+  final Set<String> _sentAlertKeys = {};
+
+  /// Réinitialise le cache des alertes (début de nouveau mois).
+  void resetAlertCache() => _sentAlertKeys.clear();
 
   // ─── IDs fixes ───────────────────────────────────────────────────────────
   static const int _dailyReminderId = 1;
@@ -186,6 +195,23 @@ class NotificationService {
     required String severity,
   }) async {
     await initialize();
+
+    // ── Anti-doublon ─────────────────────────────────────────────────────
+    // Clé unique : catégorie + sévérité + mois courant.
+    // Si cette alerte a déjà été envoyée ce mois-ci avec la même sévérité,
+    // on skip pour éviter le spam de notifications.
+    final now = DateTime.now();
+    final monthKey = '${now.year}-${now.month.toString().padLeft(2, '0')}';
+    final alertKey = '$categoryId:$severity:$monthKey';
+    if (_sentAlertKeys.contains(alertKey)) return;
+
+    // Si on monte en sévérité (warning → danger), on supprime l'ancienne clé
+    // warning pour permettre l'alerte danger même si warning avait été envoyé.
+    if (severity == 'danger') {
+      _sentAlertKeys.remove('$categoryId:warning:$monthKey');
+    }
+    _sentAlertKeys.add(alertKey);
+    // ─────────────────────────────────────────────────────────────────────
 
     final percent = (ratio * 100).round();
     final isDanger = severity == 'danger';

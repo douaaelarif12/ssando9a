@@ -691,105 +691,173 @@ class _ProfileHeader extends StatelessWidget {
     final email = user?.email ?? 'Aucun email';
     final initial = fullName.isNotEmpty ? fullName[0].toUpperCase() : 'U';
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        gradient: const LinearGradient(
-          colors: [Color(0xFF0B7A43), Color(0xFF10B981)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: SandoktiColors.emerald.withOpacity(0.18),
-            blurRadius: 24,
-            offset: const Offset(0, 12),
-          ),
-        ],
-      ),
-      child: Column(
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(28),
+      child: Stack(
         children: [
-          Stack(
-            children: [
-              CircleAvatar(
-                radius: 40,
-                backgroundColor: Colors.white.withOpacity(0.18),
-                child: Text(
-                  initial,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 28,
-                  ),
+          // ── Fond zellige ──────────────────────────────────────────────
+          Positioned.fill(
+            child: Image.asset(
+              'assets/patterns/zellige.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+          // ── Overlay vert sombre ───────────────────────────────────────
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color(0xFF051C0F).withOpacity(0.85),
+                    const Color(0xFF0B3A1E).withOpacity(0.80),
+                  ],
                 ),
               ),
-              Positioned(
-                right: 0,
-                bottom: 0,
-                child: InkWell(
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Photo de profil : on la branche juste après',
+            ),
+          ),
+          // ── Contenu ───────────────────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 28, 20, 22),
+            child: Column(
+              children: [
+                // Avatar
+                Stack(
+                  children: [
+                    Container(
+                      width: 86,
+                      height: 86,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withOpacity(0.10),
+                        border: Border.all(
+                          color: SandoktiColors.emerald.withOpacity(0.60),
+                          width: 2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: SandoktiColors.emerald.withOpacity(0.25),
+                            blurRadius: 20,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Text(
+                          initial,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 32,
+                            fontWeight: FontWeight.w900,
+                          ),
                         ),
                       ),
-                    );
-                  },
-                  child: Container(
-                    width: 28,
-                    height: 28,
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
                     ),
-                    child: const Icon(
-                      Icons.camera_alt_rounded,
-                      color: Colors.white,
-                      size: 15,
+                    Positioned(
+                      right: 0,
+                      bottom: 0,
+                      child: InkWell(
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Photo de profil : bientôt disponible'),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          width: 28,
+                          height: 28,
+                          decoration: BoxDecoration(
+                            color: SandoktiColors.emerald,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: const Color(0xFF051C0F),
+                              width: 2,
+                            ),
+                          ),
+                          child: const Icon(
+                            Icons.camera_alt_rounded,
+                            color: Colors.white,
+                            size: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  fullName,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  email,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.60),
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // Séparateur vert
+                Container(
+                  height: 1,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        SandoktiColors.emerald.withOpacity(0.55),
+                        Colors.transparent,
+                      ],
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            fullName,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 22,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            email,
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.9),
-            ),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: SandoktiColors.emerald,
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                const SizedBox(height: 18),
+                // Bouton modifier en verre
+                SizedBox(
+                  width: double.infinity,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: onEditProfile,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.10),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: SandoktiColors.emerald.withOpacity(0.45),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.edit_outlined,
+                            color: SandoktiColors.emerald,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          const Text(
+                            'Modifier mes informations',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              onPressed: onEditProfile,
-              icon: const Icon(Icons.edit_outlined),
-              label: const Text(
-                'Modifier mes informations',
-                style: TextStyle(fontWeight: FontWeight.w800),
-              ),
+              ],
             ),
           ),
         ],

@@ -13,19 +13,14 @@ class AuthGate extends ConsumerWidget {
     final auth = ref.watch(authProvider);
 
     return auth.when(
+      // Splash pendant la vérification de session Firebase
       loading: () => const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
+        body: Center(child: CircularProgressIndicator()),
       ),
+      // Erreur inattendue → login
       error: (_, __) => const LoginScreen(),
-      data: (user) {
-        if (user == null) {
-          return const LoginScreen();
-        }
-
-        return const AppShell();
-      },
+      // Résultat : user connecté → AppShell, sinon → LoginScreen
+      data: (user) => user != null ? const AppShell() : const LoginScreen(),
     );
   }
 }

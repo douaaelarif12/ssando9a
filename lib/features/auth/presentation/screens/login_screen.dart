@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../app/navigation/app_shell.dart';
 import '../auth_controller.dart';
 import 'register_screen.dart';
 
@@ -333,13 +332,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     );
                                     return;
                                   }
-
-                                  Navigator.of(context).pushAndRemoveUntil(
-                                    MaterialPageRoute(
-                                      builder: (_) => const AppShell(),
-                                    ),
-                                    (route) => false,
-                                  );
+                                  ref.invalidate(authProvider);
+                                  // AuthGate gère la redirection automatiquement
                                 },
                           child: Text(
                             isLoading ? 'Chargement...' : 'Se connecter',
